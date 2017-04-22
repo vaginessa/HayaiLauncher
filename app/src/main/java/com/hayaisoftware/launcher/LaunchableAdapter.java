@@ -35,6 +35,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hayaisoftware.launcher.activities.CustomLaunchableActivities;
 import com.hayaisoftware.launcher.activities.SharedLauncherPrefs;
 import com.hayaisoftware.launcher.comparators.AlphabeticalOrder;
 import com.hayaisoftware.launcher.comparators.PinToTop;
@@ -86,6 +87,8 @@ public class LaunchableAdapter<T extends LaunchableActivity> extends BaseAdapter
             Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
     private static final String TAG = "LaunchableAdapter";
+
+    private final Context mContext;
 
     /**
      * The {@link Filter} used by this list {@code Adapter}.
@@ -149,6 +152,7 @@ public class LaunchableAdapter<T extends LaunchableActivity> extends BaseAdapter
     public LaunchableAdapter(@NonNull final Context context, @LayoutRes final int resource,
             final int initialSize) {
         final Resources res = context.getResources();
+        mContext = context;
         mDropDownResource = resource;
         mObjects = Collections.synchronizedList(new ArrayList<T>(initialSize));
         mIconSizePixels = res.getDimensionPixelSize(R.dimen.app_icon_size);
@@ -866,6 +870,13 @@ public class LaunchableAdapter<T extends LaunchableActivity> extends BaseAdapter
                 } else {
                     final String prefixString = stripAccents(constraint).toLowerCase();
                     final Collection<T> newValues = new ArrayList<>();
+
+                    if (!prefixString.isEmpty()) {
+                        final CustomLaunchableActivities launchableActivities =
+                                new CustomLaunchableActivities(mContext);
+                        newValues.addAll((Collection<? extends T>)
+                                launchableActivities.getCustomLaunchables(prefixString));
+                    }
 
                     for (int i = 0; i < count; i++) {
                         final T value = values.get(i);
