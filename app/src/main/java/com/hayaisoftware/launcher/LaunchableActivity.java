@@ -37,6 +37,8 @@ public class LaunchableActivity {
     // This priority designates the launchable does not have raised priority.
     public static final int PIN_PRIORITY_NONE = 0;
 
+    public static final int PIN_PRIORITY_AUTO = 2;
+
     private static final String TAG = "LaunchableActivity";
 
     private final String mActivityLabel;

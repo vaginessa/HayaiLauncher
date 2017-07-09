@@ -51,6 +51,7 @@ public class SettingsFragment extends PreferenceFragment implements
             findPreference(R.string.pref_key_notification_priority).setEnabled(false);
         }
 
+        setAutoPinVisibility();
         setUsageStatisticsStatus();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -87,8 +88,17 @@ public class SettingsFragment extends PreferenceFragment implements
                 if (prefs.isNotificationEnabled()) {
                     ShortcutNotificationManager.showNotification(context);
                 }
+            } else if (key.equals(getString(R.string.pref_key_preferred_order))) {
+                setAutoPinVisibility();
             }
         }
+    }
+
+    private void setAutoPinVisibility() {
+        final Preference autoPin = findPreference(R.string.pref_key_autopin_int);
+        final SharedLauncherPrefs prefs = new SharedLauncherPrefs(autoPin.getContext());
+
+        autoPin.setEnabled(prefs.isOrderedByAlphabetical());
     }
 
     /**

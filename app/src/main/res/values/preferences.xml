@@ -19,6 +19,9 @@
     <!-- This string is the key used to retrieve the value for autokeyboard preference. -->
     <string name="pref_key_auto_keyboard" translatable="false">pref_autokeyboard</string>
 
+    <!-- This string is the key used to retrieve the autopin preference value -->
+    <string name="pref_key_autopin_int" translatable="false">pref_autopin_int</string>
+
     <!-- This string is the key used to retrieve the value for icon preference. -->
     <string name="pref_key_disable_icons" translatable="false">pref_disable_icons</string>
 

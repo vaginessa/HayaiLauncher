@@ -62,4 +62,8 @@
     <string name="pref_modify_android_usage_summary">
         Enable Android usage for more accurate ordering.
     </string>
+    <string name="pref_app_max_auto_pin">Maximum autopins</string>
+    <string name="pref_app_max_auto_pin_dialog_msg">
+        Setting this option sets up automatically pinning launchables based on their usage.
+    </string>
 </resources>

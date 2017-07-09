@@ -263,12 +263,7 @@ public class SearchActivity extends Activity
             launchableActivity.setLaunchTime();
             launchableActivity.addUsage();
             launchableprefs.writePreference(launchableActivity);
-
-            if (sharedPrefs.isOrderedByRecent()) {
-                mAdapter.sort(LaunchableAdapter.RECENT);
-            } else if (sharedPrefs.isOrderedByUsage()) {
-                mAdapter.sort(LaunchableAdapter.USAGE);
-            }
+            mAdapter.sortApps(this);
         } catch (final ActivityNotFoundException e) {
             if (BuildConfig.DEBUG) {
                 throw e;
@@ -421,13 +416,19 @@ public class SearchActivity extends Activity
 
         final LaunchableActivity activity = getLaunchableActivity(menuInfo);
         final MenuItem item = menu.findItem(R.id.appmenu_pin_to_top);
+        final int priority = activity.getPriority();
 
         menu.setHeaderTitle(activity.toString());
 
-        if (activity.getPriority() == LaunchableActivity.PIN_PRIORITY_NONE) {
-            item.setTitle(R.string.appmenu_pin_to_top);
+        if (priority == LaunchableActivity.PIN_PRIORITY_AUTO) {
+            item.setVisible(false);
         } else {
-            item.setTitle(R.string.appmenu_remove_pin);
+            if (priority == LaunchableActivity.PIN_PRIORITY_NONE) {
+                item.setTitle(R.string.appmenu_pin_to_top);
+            } else if (priority == LaunchableActivity.PIN_PRIORITY_MANUAL) {
+                item.setTitle(R.string.appmenu_remove_pin);
+            }
+            item.setVisible(true);
         }
     }
 
@@ -604,7 +605,8 @@ public class SearchActivity extends Activity
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
             final String key) {
         //does this need to run in uiThread?
-        if (getString(R.string.pref_key_preferred_order).equals(key)) {
+        if (getString(R.string.pref_key_preferred_order).equals(key) ||
+                getString(R.string.pref_key_autopin_int).equals(key)) {
             mAdapter.sortApps(this);
         } else if (getString(R.string.pref_key_disable_icons).equals(key)) {
             recreate();

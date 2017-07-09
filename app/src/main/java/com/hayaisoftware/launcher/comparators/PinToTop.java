@@ -22,6 +22,17 @@ public class PinToTop implements Comparator<LaunchableActivity> {
 
     @Override
     public int compare(final LaunchableActivity lhs, final LaunchableActivity rhs) {
-        return rhs.getPriority() - lhs.getPriority();
+        final int lPriority = lhs.getPriority();
+        final int rPriority = rhs.getPriority();
+        final int result;
+
+        if (lPriority != LaunchableActivity.PIN_PRIORITY_NONE && rPriority !=
+                LaunchableActivity.PIN_PRIORITY_NONE) {
+            result = 0;
+        } else {
+            result = rPriority - lPriority;
+        }
+
+        return result;
     }
 }

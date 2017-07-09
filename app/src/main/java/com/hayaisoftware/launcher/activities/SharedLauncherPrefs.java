@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.StringRes;
 
+import com.hayaisoftware.launcher.LaunchableActivity;
 import com.hayaisoftware.launcher.R;
 
 /**
@@ -73,6 +74,18 @@ public class SharedLauncherPrefs {
      */
     public boolean areIconsEnabled() {
         return !isPrefEnabled(R.string.pref_key_disable_icons, false);
+    }
+
+    /**
+     * This returns the current autopin value.
+     *
+     * @return A positive integer representing how many launchables to autopin.
+     */
+    public int getAutopinValue() {
+        final String key = getString(R.string.pref_key_autopin_int);
+        final String value = mPreferences.getString(key, "0");
+
+        return Integer.parseInt(value);
     }
 
     /**

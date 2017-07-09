@@ -707,6 +707,66 @@ public class LaunchableAdapter<T extends LaunchableActivity> extends BaseAdapter
     }
 
     /**
+     * This method automatically generates pinned {@link LaunchableActivity}ies, at the users'
+     * option.
+     *
+     * Autopinning {@code LaunchableActivity}s is a concept that the user has picked the
+     * {@link AlphabeticalOrder} {@link Comparator} to order this Adapter and they wish to have
+     * {@code x} most used applications to be pinned on their behalf.
+     *
+     * If there is no usage on a {@link LaunchableActivity}, the LaunchableActivity is excluded
+     * from autopinning.
+     */
+    private void setAutoPinLaunchables(final int autoPinCount) {
+        final Collection<T> tempStorage;
+        final List<T> potentialPins = new ArrayList<>(autoPinCount);
+
+        if (mOriginalValues == null) {
+            tempStorage = mObjects;
+        } else {
+            tempStorage = mOriginalValues;
+        }
+
+        int manualPinIterator = 0;
+        int autoPinIterator = autoPinCount;
+        for (final T launchable : tempStorage) {
+            final int prio = launchable.getPriority();
+
+            if (prio == LaunchableActivity.PIN_PRIORITY_MANUAL) {
+                manualPinIterator++;
+            } else if (autoPinIterator > 0 && launchable.getUsageQuantity() > 0) {
+                potentialPins.add(launchable);
+                autoPinIterator--;
+            } else if (prio != LaunchableActivity.PIN_PRIORITY_NONE) {
+                launchable.setPriority(LaunchableActivity.PIN_PRIORITY_NONE);
+            }
+        }
+
+        setAutoPinPriories(potentialPins, autoPinCount - manualPinIterator);
+    }
+
+
+    /**
+     * This method sets a list of LaunchableActivities and sets the first {@code autoPinSize} as
+     * {@link LaunchableActivity#PIN_PRIORITY_AUTO}.
+     *
+     * @param potentialPins The LaunchableActivities to, potentially, set as auto pinned.
+     * @param autoPinSize   The actual number of LaunchableActivies to set as auto pinned.
+     */
+    private void setAutoPinPriories(final List<T> potentialPins,
+            int autoPinSize) {
+        if (autoPinSize < 0) {
+            autoPinSize = 0;
+        } else if (autoPinSize > potentialPins.size()) {
+            autoPinSize = potentialPins.size();
+        }
+
+        for (final T autoPin : potentialPins.subList(0, autoPinSize)) {
+            autoPin.setPriority(LaunchableActivity.PIN_PRIORITY_AUTO);
+        }
+    }
+
+    /**
      * <p>Sets the layout resource to create the drop down views.</p>
      *
      * @param resource the layout resource defining the drop down views
@@ -782,6 +842,8 @@ public class LaunchableAdapter<T extends LaunchableActivity> extends BaseAdapter
                 sort(RECENT);
             } else if (prefs.isOrderedByUsage()) {
                 sort(USAGE);
+            } else if (prefs.isOrderedByAlphabetical()) {
+                setAutoPinLaunchables(prefs.getAutopinValue());
             }
 
             sort(PIN_TO_TOP);
